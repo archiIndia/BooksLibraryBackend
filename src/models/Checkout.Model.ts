@@ -16,7 +16,7 @@ const CheckoutSchema = new mongoose.Schema<ICheckout>({
   member_id: {
     type: mongoose.Types.ObjectId,
     required: true,
-    ref: "members",
+    ref: "library-members",
   },
   issue_date: {
     type: Date,
@@ -62,6 +62,7 @@ CheckoutSchema.virtual("book_list.book_details", {
   localField: "book_list.book_id",
   foreignField: "_id",
   ref: "books",
+  justOne: true,
 });
 
 const CheckoutModel = mongoose.model<ICheckout>("checkouts", CheckoutSchema);

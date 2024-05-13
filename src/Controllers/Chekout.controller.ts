@@ -22,7 +22,7 @@ const createCheckout = async (req: Request, res: Response) => {
 const getAllCheckouts = async (req: Request, res: Response) => {
   try {
     const checkouts = await CheckoutModel.find()
-      // .populate("members_details")
+      .populate("member_details")
       .populate("book_list.book_details")
       .lean();
     res.status(200).send(checkouts);
@@ -30,15 +30,32 @@ const getAllCheckouts = async (req: Request, res: Response) => {
     res.status(404).send(error.message);
   }
 };
-const deleteCheckouts= async(req: Request, res: Response)=> {
-  try{
-const delId= req.params.id;
-const del= await CheckoutModel.deleteOne({_id: delId});
-res.status(202).send(del);
+const deleteCheckouts = async (req: Request, res: Response) => {
+  try {
+    const delId = req.params.id;
+    const del = await CheckoutModel.deleteOne({ _id: delId });
+    res.status(202).send(del);
+  } catch (error) {
+    res.status(404).send(error.message);
   }
-  catch(error){
-res. status(404).send(error.message);
+};
+const returnCheckout = async (req: Request, res: Response) => {
+  try {
+    const rId = req.params.id;
+    const Checkout = await CheckoutModel.findOneAndUpdate(
+      {
+        _id: rId,
+      },
+      {
+        $set: {
+          has_returned: true,
+        },
+      }
+    );
+    res.status(202).json(Checkout);
+  } catch (error) {
+    res.status(404).send(error.message);
   }
 };
 
-export { createCheckout, getAllCheckouts, deleteCheckouts };
+export { createCheckout, getAllCheckouts, deleteCheckouts, returnCheckout };
